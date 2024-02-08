@@ -6,11 +6,10 @@ import 'package:http/http.dart' as http;
 abstract base class Repository {
   Repository({
     http.Client? client,
-    String? baseURL,
-  })  : assert(
-            baseURL == null, "baseURL of a Repository cannot be null or empty"),
-        _client = client ?? http.Client(),
-        _baseURL = baseURL ?? "";
+    String baseURL = "",
+  })  : _client = client ?? http.Client(),
+        _baseURL = baseURL,
+        assert(baseURL.isNotEmpty, "baseURL of a Repository cannot be empty");
 
   final http.Client _client;
   final String _baseURL;
