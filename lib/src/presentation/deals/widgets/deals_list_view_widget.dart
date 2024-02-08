@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lesgo/src/models/models.dart';
 import 'package:lesgo/src/stores/deals_store.dart';
+import 'package:share_plus/share_plus.dart';
 
 class DealsListViewWidget extends StatefulWidget {
   const DealsListViewWidget({
@@ -16,6 +18,35 @@ class DealsListViewWidget extends StatefulWidget {
 }
 
 class _DealsListViewWidgetState extends State<DealsListViewWidget> {
+  late ScrollController _scrollController;
+
+  void _autoFetchNearBottom() {
+    const fetchThreshold = 150;
+    final scrollDelta = _scrollController.position.maxScrollExtent.floor() -
+        _scrollController.offset.floor();
+
+    if (scrollDelta < fetchThreshold) {
+      widget.store.loadMoreDeals().whenComplete(() {
+        Fluttertoast.cancel();
+        Fluttertoast.showToast(msg: 'Fetching more deals');
+        setState(() {});
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _scrollController = ScrollController()..addListener(_autoFetchNearBottom);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Observer(
@@ -29,11 +60,12 @@ class _DealsListViewWidgetState extends State<DealsListViewWidget> {
 
         if (deals.isEmpty) {
           return const Center(
-            child: Text('We could not find any deals: '),
+            child: Text('We could not find any deals'),
           );
         }
 
         return ListView.separated(
+          controller: _scrollController,
           itemCount: widget.store.deals.length,
           itemBuilder: (_, index) {
             final deal = deals.elementAt(index);
@@ -101,7 +133,11 @@ class _DealsListViewItemWidget extends StatelessWidget {
                 const SizedBox.square(dimension: 8),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                  onPressed: () {},
+                  onPressed: () async {
+                    final uri = Uri.https('https://store.steampowered.com',
+                        'app/${deal.steamAppId}');
+                    await Share.shareUri(uri);
+                  },
                   child: Text(
                     "Share",
                     style: Theme.of(context)

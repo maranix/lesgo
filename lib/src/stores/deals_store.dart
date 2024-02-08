@@ -47,6 +47,10 @@ abstract class _DealsStore with Store {
 
   @action
   Future<void> loadMoreDeals() async {
+    if (_fetchMoreDealsFuture.status == FutureStatus.pending) {
+      return;
+    }
+
     // Increment the page count by 1
     _page += 1;
 
