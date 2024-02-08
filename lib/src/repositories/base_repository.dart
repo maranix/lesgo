@@ -17,7 +17,7 @@ abstract base class Repository {
 
   String get baseURL => _baseURL;
 
-  Future<String?> get(Uri uri, Map<String, String>? headers) async {
+  Future<String?> get(Uri uri, [Map<String, String>? headers]) async {
     final res = await _client.get(uri, headers: headers);
 
     if (res.statusCode == HttpStatus.ok) {
