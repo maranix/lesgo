@@ -134,8 +134,11 @@ class _DealsListViewItemWidget extends StatelessWidget {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                   onPressed: () async {
-                    final uri = Uri.https('https://store.steampowered.com',
-                        'app/${deal.steamAppId}');
+                    final uri = Uri.https(
+                      'store.steampowered.com',
+                      'app/${deal.steamAppId}',
+                    );
+
                     await Share.shareUri(uri);
                   },
                   child: Text(
