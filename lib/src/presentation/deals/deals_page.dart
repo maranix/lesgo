@@ -29,73 +29,48 @@ class _DealsPageState extends State<DealsPage> {
         centerTitle: true,
         titleTextStyle: Theme.of(context).textTheme.titleMedium,
       ),
-      body: Center(
-        child: Column(
-          children: [
-            _FailureWidget(store: _dealsStore),
-            _LoadingIndicator(store: _dealsStore),
-            Expanded(
-              child: DealsListViewWidget(store: _dealsStore),
+      body: _DealsPageBody(store: _dealsStore),
+    );
+  }
+}
+
+class _DealsPageBody extends StatelessWidget {
+  const _DealsPageBody({required this.store});
+
+  final DealsStore store;
+
+  @override
+  Widget build(BuildContext context) {
+    return Observer(
+      builder: (_) => switch (store.fetchDealsFuture.status) {
+        FutureStatus.pending => const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator.adaptive(),
+                SizedBox.square(
+                  dimension: 4,
+                ),
+                Text('Loading'),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _FailureWidget extends StatelessWidget {
-  const _FailureWidget({
-    required this.store,
-  });
-
-  final DealsStore store;
-
-  @override
-  Widget build(BuildContext context) {
-    return Observer(
-      name: 'DealsFailureWidget',
-      builder: (_) => switch (store.fetchDealsFuture.status) {
-        FutureStatus.rejected => Column(
-            children: [
-              const Text('An error occurred while fetching deals'),
-              const SizedBox.square(
-                dimension: 4,
-              ),
-              TextButton(
-                onPressed: store.fetchDeals,
-                child: const Text('Retry'),
-              ),
-            ],
           ),
-        _ => const SizedBox.shrink(),
-      },
-    );
-  }
-}
-
-class _LoadingIndicator extends StatelessWidget {
-  const _LoadingIndicator({
-    required this.store,
-  });
-
-  final DealsStore store;
-
-  @override
-  Widget build(BuildContext context) {
-    return Observer(
-      name: 'DealsLoadingIndicator',
-      builder: (_) => switch (store.fetchDealsFuture.status) {
-        FutureStatus.pending => const Column(
-            children: [
-              CircularProgressIndicator.adaptive(),
-              SizedBox.square(
-                dimension: 4,
-              ),
-              Text('Loading'),
-            ],
+        FutureStatus.rejected => Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('An error occurred while fetching deals'),
+                const SizedBox.square(
+                  dimension: 4,
+                ),
+                TextButton(
+                  onPressed: store.fetchDeals,
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
           ),
-        _ => const SizedBox.shrink(),
+        FutureStatus.fulfilled => DealsListViewWidget(store: store),
       },
     );
   }
