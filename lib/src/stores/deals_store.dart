@@ -39,9 +39,10 @@ abstract class _DealsStore with Store {
 
   @action
   Future<void> fetchDeals({int pageNumber = 0}) async {
-    final data = await _repo.getDeals(pageNumber: pageNumber);
+    final future = _repo.getDeals(pageNumber: pageNumber);
+    _fetchDealsFuture = ObservableFuture(future);
 
-    _deals = ObservableList.of(data);
+    _deals = await future;
   }
 
   @action
