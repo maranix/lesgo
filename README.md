@@ -2,6 +2,8 @@
 
 An assignment implemented to showcase Infinite Scrolling & Auto-fetching on scroll using `MobX` state-management & `freezed` for data models.
 
+https://github.com/maranix/lesgo/assets/59292838/451eeffc-aacb-4a88-9aa7-74f834d59f20
+
 ## Tech Stack
 
 - Flutter 3.10
