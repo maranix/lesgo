@@ -39,6 +39,7 @@ dependencies:
   http: ^1.2.0
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
+  mobx: ^2.3.0+1
 
 dev_dependencies:
   flutter_test:
